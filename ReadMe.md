@@ -3,9 +3,9 @@ Setup vitualenv with Python3. This only needs to be done once.
 ```
 cd dp-viz-gen
 sudo pip install virtualenv      # This may already be installed
-virtualenv -p python3 .env   		 # Create a virtual environment (python3)
+virtualenv -p python3.4 .env   	 # Create a virtual environment (python3)
 source .env/bin/activate         # Activate the virtual environment
-pip install -r requirements.txt  # Install dependencies
+pip install -r requirement.txt   # Install dependencies
 
 # After you are done
 deactivate                       # Exit the virtual environment
@@ -15,6 +15,12 @@ deactivate                       # Exit the virtual environment
 Start example notebook 
 ```
 source .env/bin/activate         # Activate the virtual environment
+
+# setting up dpcomp paths
+
+export DPCOMP_CORE=$HOME/Github/dpcomp_core_op  
+export PYTHONPATH=$PYTHONPATH:$DPCOMP_CORE/
+export PYTHONPATH=$PYTHONPATH:$DPCOMP_CORE/tests
 
 jupyter notebook
 

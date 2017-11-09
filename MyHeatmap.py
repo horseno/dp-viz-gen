@@ -109,7 +109,7 @@ def drawHeatMap(name, transformFunc, cmap='RdBu_r', nonNegative=False, outName=N
 # colormap and deltaD correlation
 
 
-def drawHeatMapSmooth(name, binNum, transformFunc, deltaD, uniformBin=False, cmap=None, nonNegative=True, outName=None, dpi=None):
+def drawHeatMapSmooth(name, binNum, transformFunc, deltaD, uniformBin=False, cmap=None, nonNegative=True, outName=None, dpi=None, showHist=True):
     arr = np.load(name).astype('float')
     dim1, dim2 = arr.shape
     maxValue = arr.max()
@@ -127,26 +127,34 @@ def drawHeatMapSmooth(name, binNum, transformFunc, deltaD, uniformBin=False, cma
 
     arrBin, binLabel = mapToBinCenter(xp, fp, arr, binNum)
 
-    plt.figure(figsize=(10, 5))
-    # plot heatmap
-    plt.subplot(1, 2, 1)
-    sns.heatmap(arrBin, square=True, vmin=0, vmax=1,
-                xticklabels=False, yticklabels=False, cbar=False, cmap=cmap)
-    # Plot histograms
-    plt.subplot(1, 2, 2)
+    if showHist:
+        plt.figure(figsize=(10, 5))
+        # plot heatmap
+        plt.subplot(1, 2, 1)
+        sns.heatmap(arrBin, square=True, vmin=0, vmax=1,
+                    xticklabels=False, yticklabels=False, cbar=False, cmap=cmap)
 
-    cm = plt.cm.get_cmap(cmap)
-    n, bins, patches = plt.hist(arr.ravel(), bins, range=[
-                                0, 1], orientation="horizontal")
-    for c, p in zip(range(len(patches)), patches):
-        plt.setp(p, 'facecolor', cm((c + 0.5) / binNum))
+        # Plot histograms
+        plt.subplot(1, 2, 2)    
 
-    n2, bins2, patches2 = plt.hist(
-        arr.ravel(), binNum * 9, range=[0, 1], orientation="horizontal")
-    bin_centers2 = 0.5 * (bins2[:-1] + bins2[1:])
-    indices = np.interp(bin_centers2, xp, fp)
-    for c, p in zip(indices, patches2):
-        plt.setp(p, 'facecolor', cm((math.ceil(c) + 0.5) / binNum))
+        cm = plt.cm.get_cmap(cmap)
+        n, bins, patches = plt.hist(arr.ravel(), bins, range=[
+                                    0, 1], orientation="horizontal")
+        for c, p in zip(range(len(patches)), patches):
+            plt.setp(p, 'facecolor', cm((c + 0.5) / binNum))
+
+        n2, bins2, patches2 = plt.hist(
+            arr.ravel(), binNum * 9, range=[0, 1], orientation="horizontal")
+        bin_centers2 = 0.5 * (bins2[:-1] + bins2[1:])
+        indices = np.interp(bin_centers2, xp, fp)
+        for c, p in zip(indices, patches2):
+            plt.setp(p, 'facecolor', cm((math.ceil(c) + 0.5) / binNum))
+
+    else:
+        plt.figure(figsize=(5, 5))
+        # plot heatmap only 
+        sns.heatmap(arrBin, square=True, vmin=0, vmax=1,
+                    xticklabels=False, yticklabels=False, cbar=False, cmap=cmap)
 
     plt.xticks(rotation='vertical')
     plt.tight_layout(pad=0)
